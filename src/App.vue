@@ -1,9 +1,12 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
   <RouterView />
 </template>
 
-<style scoped>
+<style>
+* {
+  padding: 0;
+  margin: 0;
+}
 </style>
