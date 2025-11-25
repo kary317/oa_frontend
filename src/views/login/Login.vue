@@ -2,6 +2,11 @@
 import login_img from "@/assets/image/login.png";
 import { reactive } from "vue";
 import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
+import Frame from "../main/Frame.vue";
+const authStore = useAuthStore();
+const router = useRouter();
 
 let form = reactive({
   email: "",
@@ -31,16 +36,20 @@ const onSubmit = () => {
       password: form.password,
     })
     .then((res) => {
-      console.log(res);
-
+      // console.log(res);
       // 获取后端返回的正确数据
-      console.log(res.data);
-      console.log(res.data.token);
-      console.log(res.data.user);
+      // console.log(res.data);
+      // console.log(res.data.token);
+      // console.log(res.data.user);
+      let user = res.data.user;
+      let token = res.data.token;
+
+      authStore.setUserToken(user, token);
+      router.push({ name: 'Frame' });
     })
     .catch((err) => {
-      console.log(err);
-      console.log(err.response);
+      // console.log(err);
+      // console.log(err.response);
       // 获取后端返回的错误数据
       console.log(err.response.data);
       console.log(err.response.data.detail);
