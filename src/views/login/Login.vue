@@ -1,10 +1,12 @@
 <script setup name="login">
 import login_img from "@/assets/image/login.png";
 import { reactive } from "vue";
-import axios from "axios";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
-import Frame from "../main/Frame.vue";
+
+import axios from "axios";
+import authHttp from "@/api/authHttp";
+
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -13,7 +15,7 @@ let form = reactive({
   password: "",
 });
 
-const onSubmit = () => {
+const onSubmit = async () => {
   //   console.log(form.email);
   //   console.log(form.password);
 
@@ -30,30 +32,60 @@ const onSubmit = () => {
     return;
   }
 
-  axios
-    .post("http://127.0.0.1:8000/auth/login/", {
-      email: form.email,
-      password: form.password,
-    })
-    .then((res) => {
-      // console.log(res);
-      // 获取后端返回的正确数据
-      // console.log(res.data);
-      // console.log(res.data.token);
-      // console.log(res.data.user);
-      let user = res.data.user;
-      let token = res.data.token;
+  // 第一版:原生axios发送请求
+  // axios
+  //   .post("http://127.0.0.1:8000/auth/login/", {
+  //     email: form.email,
+  //     password: form.password,
+  //   })
+  //   .then((res) => {
+  //     // console.log(res);
+  //     // 获取后端返回的正确数据
+  //     // console.log(res.data);
+  //     // console.log(res.data.token);
+  //     // console.log(res.data.user);
+  //     let user = res.data.user;
+  //     let token = res.data.token;
+  //     authStore.setUserToken(user, token);
+  //     router.push({ name: "Frame" });
+  //   })
+  //   .catch((err) => {
+  //     // console.log(err);
+  //     // console.log(err.response);
+  //     // 获取后端返回的错误数据
+  //     console.log(err.response.data);
+  //     console.log(err.response.data.detail);
+  //   });
 
-      authStore.setUserToken(user, token);
-      router.push({ name: 'Frame' });
-    })
-    .catch((err) => {
-      // console.log(err);
-      // console.log(err.response);
-      // 获取后端返回的错误数据
-      console.log(err.response.data);
-      console.log(err.response.data.detail);
-    });
+  // 第二版:封装axios,使用封装后的接口
+  // authHttp
+  //   .login(form.email, form.password)
+  //   .then((res) => {
+  //     // console.log(res.data);
+  //     let user = res.data.user;
+  //     let token = res.data.token;
+  //     authStore.setUserToken(user, token);
+  //     router.push({ name: "Frame" });
+  //   })
+  //   .catch((err) => {
+  //     console.log(err.response.data);
+  //     console.log(err.response.data.detail);
+  //   });
+
+  // 第三版:使用JS的Promise对象异步方式,不使用Promise的回调
+  // 嵌套回调，易产生回调地狱（callback hell）
+  // 用同步的风格编写异步代码,把复杂的异步代码，写得像简单的同步代码一样直观
+  try {
+    let data = await authHttp.login(form.email, form.password);
+    // console.log(data);
+    let user = data.user;
+    let token = data.token;
+    authStore.setUserToken(user, token);
+    router.push({ name: "Frame" });
+  } catch (err) {
+    console.log(err);
+    console.log(err.detail);
+  }
 };
 </script>
 
