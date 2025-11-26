@@ -31,7 +31,7 @@ const onCollapseAside = () => {
         default-active="1"
         text-color="#fff"
         :collapse="isCollapse"
-        :collapse-transition='false'
+        :collapse-transition="false"
       >
         <el-menu-item index="1">
           <el-icon><HomeFilled /></el-icon>
@@ -87,12 +87,35 @@ const onCollapseAside = () => {
     </el-aside>
     <el-container>
       <el-header class="header">
-        <el-button :icon="Fold" v-show="!isCollapse" @click="onCollapseAside" />
-        <el-button
-          :icon="Expand"
-          v-show="isCollapse"
-          @click="onCollapseAside"
-        />
+        <div class="left_header">
+          <el-button
+            :icon="Fold"
+            v-show="!isCollapse"
+            @click="onCollapseAside"
+          />
+          <el-button
+            :icon="Expand"
+            v-show="isCollapse"
+            @click="onCollapseAside"
+          />
+        </div>
+
+        <el-dropdown>
+          <span class="el-dropdown-link">
+            <el-avatar :size="30" icon="UserFilled" />
+            <span>周杰伦</span>
+            <el-icon class="el-icon--right">
+              <arrow-down />
+            </el-icon>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item>修改密码</el-dropdown-item>
+
+              <el-dropdown-item divided>退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </el-header>
 
       <el-main class="main">Main</el-main>
@@ -127,9 +150,17 @@ const onCollapseAside = () => {
   height: 60px;
   background-color: #fff;
   border-bottom: 1px solid #e6e6e6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .el-menu {
   border-right: none;
+}
+
+.el-dropdown-link {
+  display: flex;
+  align-items: center;
 }
 </style>
