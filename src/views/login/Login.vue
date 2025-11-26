@@ -7,6 +7,8 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import authHttp from "@/api/authHttp";
 
+import { ElMessage } from "element-plus";
+
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -23,12 +25,14 @@ const onSubmit = async () => {
   let emailRgx = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9])+/;
 
   if (!emailRgx.test(form.email)) {
-    alert("邮箱格式不正确");
+    // alert("邮箱格式不正确");
+    ElMessage.info("邮箱格式不正确")
     return;
   }
 
   if (!pwdRgx.test(form.password)) {
-    alert("密码格式不正确");
+    // alert("密码格式不正确");
+    ElMessage.info("密码格式不正确")
     return;
   }
 
@@ -83,8 +87,9 @@ const onSubmit = async () => {
     authStore.setUserToken(user, token);
     router.push({ name: "Frame" });
   } catch (err) {
-    console.log(err);
-    console.log(err.detail);
+    // console.log(err);
+    // console.log(err.detail);
+    ElMessage.error(err.detail)
   }
 };
 </script>
