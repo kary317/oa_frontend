@@ -1,15 +1,37 @@
-<script setup name="frame"></script>
+<script setup name="frame">
+import { ref } from "vue";
+import { computed } from "vue";
+import { Expand, Fold } from "@element-plus/icons-vue";
+
+let isCollapse = ref(true);
+
+let asideWidth = computed(() => {
+  if (isCollapse.value) {
+    return "64px";
+  } else {
+    return "250px";
+  }
+});
+
+const onCollapseAside = () => {
+  isCollapse.value = !isCollapse.value;
+};
+</script>
 
 <template>
   <el-container class="container">
-    <el-aside width="200px" class="aside">
-      <router-link :to="{ name: 'Frame' }" class="brand">OA系统</router-link>
+    <el-aside :width="asideWidth" class="aside">
+      <router-link :to="{ name: 'Frame' }" class="brand"
+        >OA<span v-show="!isCollapse">系统</span></router-link
+      >
       <el-menu
         active-text-color="#ffd04b"
         background-color="#343a40"
         class="el-menu-vertical-demo"
         default-active="1"
         text-color="#fff"
+        :collapse="isCollapse"
+        :collapse-transition='false'
       >
         <el-menu-item index="1">
           <el-icon><HomeFilled /></el-icon>
@@ -64,7 +86,15 @@
       </el-menu>
     </el-aside>
     <el-container>
-      <el-header class="header">Header</el-header>
+      <el-header class="header">
+        <el-button :icon="Fold" v-show="!isCollapse" @click="onCollapseAside" />
+        <el-button
+          :icon="Expand"
+          v-show="isCollapse"
+          @click="onCollapseAside"
+        />
+      </el-header>
+
       <el-main class="main">Main</el-main>
     </el-container>
   </el-container>
