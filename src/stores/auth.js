@@ -19,17 +19,37 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.setItem(TOKEN_KEY, token);
   };
 
+  // 验证小bug
+  // let a = {};
+  // if (a) {
+  //   //空对象,if判断会返回true
+  //   console.log(true);
+  // }
+  // let b = "";
+  // if (b) {
+  //   //空字符串,if判断返回false
+  //   console.log(true);
+  // }
+
   // 开放私有属性外部访问接口
+  // 修正bug:通过Object.keys(_user.value) == 0判断是不是空对象
   let user = computed(() => {
-    if (!_user.value) {
-      _user.value = localStorage.getItem(USER_KEY);
+    // if (!_user.value) {
+    if (Object.keys(_user.value) == 0) {
+      const user_str = localStorage.getItem(USER_KEY);
+      if (user_str) {
+        _user.value = JSON.parse(user_str);
+      }
     }
     return _user.value;
   });
 
   let token = computed(() => {
     if (!_token.value) {
-      _token.value = localStorage.getItem(TOKEN_KEY);
+      const token_str = localStorage.getItem(TOKEN_KEY);
+      if (token_str) {
+        _token.value = token_str;
+      }
     }
     return _token.value;
   });

@@ -3,6 +3,11 @@ import { ref } from "vue";
 import { computed } from "vue";
 import { Expand, Fold } from "@element-plus/icons-vue";
 
+// 验证authStore的小bug
+// import { useAuthStore } from "@/stores/auth";
+// const authStore = useAuthStore();
+// console.log('user:',authStore.user);
+
 let isCollapse = ref(true);
 
 let asideWidth = computed(() => {
