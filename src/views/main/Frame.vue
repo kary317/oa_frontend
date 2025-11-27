@@ -2,6 +2,8 @@
 import { reactive, ref } from "vue";
 import { computed } from "vue";
 import { Expand, Fold } from "@element-plus/icons-vue";
+import authHttp from "@/api/authHttp";
+import { ElMessage } from "element-plus";
 
 // 验证authStore的小bug
 // import { useAuthStore } from "@/stores/auth";
@@ -57,15 +59,25 @@ const onControlResetPwdDialog = () => {
 };
 
 const onsubmit = () => {
-  formTag.value.validate((valid, fields) => {
+  formTag.value.validate(async (valid, fields) => {
     if (valid) {
-      console.log("字段校验正确");
+      // console.log("字段校验正确");
+      try {
+        let res = await authHttp.resetPwd(
+          resetPwdForm.oldpwd,
+          resetPwdForm.pwd1,
+          resetPwdForm.pwd2
+        );
+        // 不用后端返回的信息 ElMessage.success(res.detail);
+        ElMessage.success("密码修改成功!");
+        dialogVisible.value = false;
+      } catch (error) {
+        ElMessage.error(error.detail);
+      }
     } else {
-      console.log("字段校验失败");
+      ElMessage.info("请按要求填写字段");
     }
-    console.log(fields);
   });
-  console.log("点击了提交");
 };
 
 const onCollapseAside = () => {

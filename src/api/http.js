@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 
 class Http {
   constructor() {
@@ -6,6 +7,17 @@ class Http {
       // baseURL: "http://127.0.0.1:8000",
       baseURL: import.meta.env.VITE_BASE_URL,
       timeout: 6000,
+    });
+    // axios提供的interceptors拦截器,类似于django的中间件
+    // 响应之后的拦截this.instance.interceptors.response.use
+    // 响应之前的拦截this.instance.interceptors.request.use
+    this.instance.interceptors.request.use((config) => {
+      const authStore = useAuthStore();
+      const token = authStore.token;
+      if (token) {
+        config.headers.Authorization = "JWT " + token;
+      }
+      return config;
     });
   }
   post(path, data) {
