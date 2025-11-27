@@ -19,6 +19,13 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.setItem(TOKEN_KEY, token);
   };
 
+  const clearUserToken = () => {
+    _user.value = {};
+    _token.value = "";
+    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+  };
+
   // 验证小bug
   // let a = {};
   // if (a) {
@@ -60,5 +67,5 @@ export const useAuthStore = defineStore("auth", () => {
     }
     return false;
   });
-  return { setUserToken, user, token, is_logined };
+  return { setUserToken, user, token, is_logined, clearUserToken };
 });

@@ -8,6 +8,12 @@ import { Expand, Fold } from "@element-plus/icons-vue";
 // const authStore = useAuthStore();
 // console.log('user:',authStore.user);
 
+import { useRouter } from "vue-router";
+const router = useRouter();
+
+import { useAuthStore } from "@/stores/auth";
+const authStore = useAuthStore();
+
 let isCollapse = ref(true);
 
 let asideWidth = computed(() => {
@@ -20,6 +26,11 @@ let asideWidth = computed(() => {
 
 const onCollapseAside = () => {
   isCollapse.value = !isCollapse.value;
+};
+
+const onExit = () => {
+  authStore.clearUserToken();
+  router.push({ name: "Login" });
 };
 </script>
 
@@ -108,7 +119,11 @@ const onCollapseAside = () => {
         <el-dropdown>
           <span class="el-dropdown-link">
             <el-avatar :size="30" icon="UserFilled" />
-            <span>周杰伦</span>
+            <span
+              >[{{ authStore.user.department.name }}]{{
+                authStore.user.realname
+              }}</span
+            >
             <el-icon class="el-icon--right">
               <arrow-down />
             </el-icon>
@@ -117,7 +132,9 @@ const onCollapseAside = () => {
             <el-dropdown-menu>
               <el-dropdown-item>修改密码</el-dropdown-item>
 
-              <el-dropdown-item divided>退出登录</el-dropdown-item>
+              <el-dropdown-item divided @click="onExit"
+                >退出登录</el-dropdown-item
+              >
             </el-dropdown-menu>
           </template>
         </el-dropdown>
