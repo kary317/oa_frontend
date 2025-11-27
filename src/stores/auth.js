@@ -32,7 +32,7 @@ export const useAuthStore = defineStore("auth", () => {
   // }
 
   // 开放私有属性外部访问接口
-  // 修正bug:通过Object.keys(_user.value) == 0判断是不是空对象
+  // 修正bug:通过Object.keys(_user.value).length == 0判断是不是空对象
   let user = computed(() => {
     // if (!_user.value) {
     if (Object.keys(_user.value) == 0) {
@@ -54,5 +54,11 @@ export const useAuthStore = defineStore("auth", () => {
     return _token.value;
   });
 
-  return { setUserToken, user, token };
+  let is_logined = computed(() => {
+    if (Object.keys(user.value).length > 0 && token.value) {
+      return true;
+    }
+    return false;
+  });
+  return { setUserToken, user, token, is_logined };
 });
