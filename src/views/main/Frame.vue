@@ -1,5 +1,5 @@
 <script setup name="frame">
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { computed } from "vue";
 import { Expand, Fold } from "@element-plus/icons-vue";
 
@@ -23,6 +23,50 @@ let asideWidth = computed(() => {
     return "250px";
   }
 });
+
+let dialogVisible = ref(false);
+let resetPwdForm = reactive({
+  oldpwd: "",
+  pwd1: "",
+  pwd2: "",
+});
+
+const formLabelWidth = "100px";
+let rules = reactive({
+  oldpwd: [
+    { required: true, message: "请输入原密码", trigger: "blur" },
+    { min: 6, max: 20, message: "密码长度在6-20位之间", trigger: "blur" },
+  ],
+  pwd1: [
+    { required: true, message: "请输入新密码", trigger: "blur" },
+    { min: 6, max: 20, message: "密码长度在6-20位之间", trigger: "blur" },
+  ],
+  pwd2: [
+    { required: true, message: "请再次输入新密码", trigger: "blur" },
+    { min: 6, max: 20, message: "密码长度在6-20位之间", trigger: "blur" },
+  ],
+});
+
+let formTag = ref();
+
+const onControlResetPwdDialog = () => {
+  resetPwdForm.oldpwd = "";
+  resetPwdForm.pwd1 = "";
+  resetPwdForm.pwd2 = "";
+  dialogVisible.value = true;
+};
+
+const onsubmit = () => {
+  formTag.value.validate((valid, fields) => {
+    if (valid) {
+      console.log("字段校验正确");
+    } else {
+      console.log("字段校验失败");
+    }
+    console.log(fields);
+  });
+  console.log("点击了提交");
+};
 
 const onCollapseAside = () => {
   isCollapse.value = !isCollapse.value;
@@ -130,7 +174,9 @@ const onExit = () => {
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>修改密码</el-dropdown-item>
+              <el-dropdown-item @click="onControlResetPwdDialog"
+                >修改密码</el-dropdown-item
+              >
 
               <el-dropdown-item divided @click="onExit"
                 >退出登录</el-dropdown-item
@@ -143,6 +189,40 @@ const onExit = () => {
       <el-main class="main">Main</el-main>
     </el-container>
   </el-container>
+
+  <el-dialog v-model="dialogVisible" title="修改密码" width="500">
+    <el-form :model="resetPwdForm" :rules="rules" ref="formTag">
+      <el-form-item label="旧密码" :label-width="formLabelWidth" prop="oldpwd">
+        <el-input
+          v-model="resetPwdForm.oldpwd"
+          autocomplete="off"
+          type="password"
+        />
+      </el-form-item>
+
+      <el-form-item label="新密码" :label-width="formLabelWidth" prop="pwd1">
+        <el-input
+          v-model="resetPwdForm.pwd1"
+          autocomplete="off"
+          type="password"
+        />
+      </el-form-item>
+
+      <el-form-item label="确认密码" :label-width="formLabelWidth" prop="pwd2">
+        <el-input
+          v-model="resetPwdForm.pwd2"
+          autocomplete="off"
+          type="password"
+        />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="onsubmit"> 确认 </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
