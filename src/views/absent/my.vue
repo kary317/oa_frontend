@@ -41,6 +41,8 @@
           range-separator="到"
           start-placeholder="起始日期"
           end-placeholder="结束日期"
+          format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD"
         />
       </el-form-item>
       <el-form-item label="审批领导" :label-width="formLabelWidth">
@@ -108,8 +110,24 @@ const onShowDialog = () => {
   dialogFormVisible.value = true;
 };
 
-const onSubmitAbsent = () => {
-  console.log(absentForm);
+const onSubmitAbsent = async () => {
+  // console.log(absentForm);
+
+  let data = {
+    title: absentForm.title,
+    absent_type_id: absentForm.absent_type_id,
+    start_date: absentForm.date_range[0],
+    end_date: absentForm.date_range[1],
+    request_content: absentForm.request_content,
+  };
+
+  try {
+    let absent = await absentHttp.applyAbsent(data);
+    dialogFormVisible.value = false;
+    console.log(absent);
+  } catch (error) {
+    ElMessage.error(error.detail);
+  }
 };
 
 let responder_str = computed(() => {

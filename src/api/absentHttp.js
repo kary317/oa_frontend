@@ -10,7 +10,12 @@ const getResponder = () => {
   return http.get(path);
 };
 
+const applyAbsent = (data) => {
+  const path = "/absent/absent/";
+  return http.post(path, data);
+};
 export default {
   getAbsentTypes,
   getResponder,
+  applyAbsent,
 };
