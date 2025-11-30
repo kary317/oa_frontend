@@ -25,8 +25,8 @@
           <el-option
             v-for="(item, index) in absent_types"
             :key="item.name"
-            label="item.name"
-            value="item.id"
+            :label="item.name"
+            :value="item.id"
           />
         </el-select>
       </el-form-item>
@@ -44,12 +44,7 @@
         />
       </el-form-item>
       <el-form-item label="审批领导" :label-width="formLabelWidth">
-        <el-input
-          readonly
-          disabled
-          value="[dongdong@qq.com]东东"
-          autocomplete="off"
-        />
+        <el-input readonly disabled :value="responder_str" autocomplete="off" />
       </el-form-item>
 
       <el-form-item
@@ -75,7 +70,9 @@
 
 <script setup name="myabsent">
 import OAPageHeader from "@/components/OAPageHeader.vue";
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted, computed } from "vue";
+import absentHttp from "@/api/absentHttp";
+import { ElMessage } from "element-plus";
 
 let dialogFormVisible = ref(false);
 let absentForm = reactive({
@@ -98,6 +95,11 @@ let rules = reactive({
     { required: true, message: "请输入请假理由!", trigger: "blur" },
   ],
 });
+let responder = reactive({
+  email: "",
+  realname: "",
+});
+
 const onShowDialog = () => {
   absentForm.title = "";
   absentForm.absent_type_id = null;
@@ -109,6 +111,26 @@ const onShowDialog = () => {
 const onSubmitAbsent = () => {
   console.log(absentForm);
 };
+
+let responder_str = computed(() => {
+  if (responder.email) {
+    return "[" + responder.email + "]" + responder.realname;
+  } else {
+    return "无";
+  }
+});
+
+onMounted(async () => {
+  try {
+    // 获取请假类型
+    absent_types.value = await absentHttp.getAbsentTypes();
+    // 获取审批者
+    let responder_data = await absentHttp.getResponder();
+    Object.assign(responder, responder_data);
+  } catch (error) {
+    ElMessage.error(error.detail);
+  }
+});
 </script>
 
 <style></style>

@@ -8,6 +8,7 @@ class Http {
       baseURL: import.meta.env.VITE_BASE_URL,
       timeout: 6000,
     });
+
     // axios提供的interceptors拦截器,类似于django的中间件
     // 响应之后的拦截this.instance.interceptors.response.use
     // 响应之前的拦截this.instance.interceptors.request.use
@@ -21,8 +22,10 @@ class Http {
     });
   }
   post(path, data) {
+    // 同步的方式
     // return this.instance.post(path, data);
 
+    // 改为异步的方式
     return new Promise(async (resolve, reject) => {
       try {
         let response = await this.instance.post(path, data);
@@ -32,8 +35,22 @@ class Http {
       }
     });
   }
+
+  // 同步的方式
+  // get(path, params) {
+  //   return this.instance.get(path, params);
+  // }
+
+  //改为异步的方式
   get(path, params) {
-    return this.instance.get(path, params);
+    return new Promise(async (resolve, reject) => {
+      try {
+        let response = await this.instance.get(path, params);
+        resolve(response.data);
+      } catch (error) {
+        reject(error.response.data);
+      }
+    });
   }
 }
 
