@@ -104,6 +104,7 @@ const onExit = () => {
         text-color="#fff"
         :collapse="isCollapse"
         :collapse-transition="false"
+        :router="true"
       >
         <el-menu-item index="1">
           <el-icon><HomeFilled /></el-icon>
@@ -116,11 +117,11 @@ const onExit = () => {
             <span>考勤管理</span>
           </template>
 
-          <el-menu-item index="2-1">
+          <el-menu-item index="2-1" :route="{ name: 'myabsent' }">
             <el-icon><UserFilled /></el-icon>
             <span>个人考勤</span>
           </el-menu-item>
-          <el-menu-item index="2-2">
+          <el-menu-item index="2-2" :route="{ name: 'subabsent' }">
             <el-icon><User /></el-icon>
             <span>下属考勤</span>
           </el-menu-item>
@@ -198,7 +199,7 @@ const onExit = () => {
         </el-dropdown>
       </el-header>
 
-      <el-main class="main">Main</el-main>
+      <el-main class="main"><RouterView></RouterView></el-main>
     </el-container>
   </el-container>
 
