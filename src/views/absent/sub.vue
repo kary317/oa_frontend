@@ -37,13 +37,11 @@
         </el-table-column>
       </el-table>
       <template #footer>
-        <el-pagination
-          background
-          layout="prev, pager, next"
+        <OAPagination
           :total="pagination.total"
-          v-model:current-page="pagination.page"
-          :page-size="10"
-      /></template>
+          v-model="pagination.page"
+        ></OAPagination>
+      </template>
     </el-card>
   </OAMain>
 </template>
@@ -55,6 +53,7 @@ import { ElMessage } from "element-plus";
 import timeFormatter from "@/utils/timeFormatter";
 
 import OAMain from "@/components/OAMain.vue";
+import OAPagination from "@/components/OAPagination.vue";
 
 let absents = ref([]);
 let pagination = reactive({
@@ -62,8 +61,4 @@ let pagination = reactive({
   page: 1,
 });
 </script>
-<style scoped>
-.el-pagination {
-  justify-content: center;
-}
-</style>
+<style scoped></style>
