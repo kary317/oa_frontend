@@ -227,4 +227,8 @@ onMounted(async () => {
 .el-pagination {
   justify-content: center;
 }
+
+.el-space :deep(.el-space__item) {
+  width: 100%;
+}
 </style>
