@@ -1,6 +1,5 @@
 <template>
-  <el-space direction="vertical" fill :size="20" style="width: 100%">
-    <OAPageHeader content="个人考勤"></OAPageHeader>
+  <OAMain title="个人考勤">
     <el-card style="text-align: right">
       <el-button type="primary" @click="onShowDialog"
         ><el-icon><Plus /></el-icon>发起考勤
@@ -42,7 +41,7 @@
           :page-size="10"
       /></template>
     </el-card>
-  </el-space>
+  </OAMain>
 
   <el-dialog v-model="dialogFormVisible" title="发起请假" width="500">
     <el-form :model="absentForm" :rules="rules" ref="absentFormRef">
@@ -112,6 +111,8 @@ import { reactive, ref, onMounted, computed, watch } from "vue";
 import absentHttp from "@/api/absentHttp";
 import { ElMessage } from "element-plus";
 import timeFormatter from "@/utils/timeFormatter";
+
+import OAMain from "@/components/OAMain.vue";
 
 let dialogFormVisible = ref(false);
 let absentForm = reactive({
@@ -226,9 +227,5 @@ onMounted(async () => {
 <style scoped>
 .el-pagination {
   justify-content: center;
-}
-
-.el-space :deep(.el-space__item) {
-  width: 100%;
 }
 </style>

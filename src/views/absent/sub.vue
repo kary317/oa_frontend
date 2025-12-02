@@ -1,6 +1,5 @@
 <template>
-  <el-space direction="vertical" fill :size="20" style="width: 100%">
-    <OAPageHeader content="下属考勤"></OAPageHeader>
+  <OAMain title="下属考勤">
     <el-card>
       <el-table :data="absents" style="width: 100%">
         <el-table-column prop="title" label="标题" />
@@ -46,7 +45,7 @@
           :page-size="10"
       /></template>
     </el-card>
-  </el-space>
+  </OAMain>
 </template>
 <script setup name="subabsent">
 import OAPageHeader from "@/components/OAPageHeader.vue";
@@ -54,6 +53,8 @@ import { reactive, ref, onMounted } from "vue";
 import absentHttp from "@/api/absentHttp";
 import { ElMessage } from "element-plus";
 import timeFormatter from "@/utils/timeFormatter";
+
+import OAMain from "@/components/OAMain.vue";
 
 let absents = ref([]);
 let pagination = reactive({
@@ -64,9 +65,5 @@ let pagination = reactive({
 <style scoped>
 .el-pagination {
   justify-content: center;
-}
-
-.el-space :deep(.el-space__item) {
-  width: 100%;
 }
 </style>
