@@ -6,31 +6,42 @@
         ><el-icon><Plus /></el-icon>发起考勤
       </el-button>
     </el-card>
-    <el-table :data="absents" style="width: 100%">
-      <el-table-column prop="title" label="标题" width="180" />
-      <el-table-column prop="absent_type.name" label="类型" width="180" />
-      <el-table-column prop="request_content" label="原因" width="180" />
-      <el-table-column label="发起时间" width="180">
-        <template #default="scope">
-          {{ timeFormatter.stringFromDateTime(scope.row.create_time) }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="start_date" label="开始日期" width="180" />
-      <el-table-column prop="end_date" label="结束日期" width="180" />
-      <el-table-column label="审核领导" width="180">
-        {{ responder_str }}
-      </el-table-column>
-      <el-table-column prop="response_content" label="反馈意见" width="180" />
-      <el-table-column prop="status" label="审核状态" width="180">
-        <template #default="scope">
-          <el-tag type="info" v-if="scope.row.status == 1">审核中</el-tag>
-          <el-tag type="success" v-else-if="scope.row.status == 2"
-            >已通过</el-tag
-          >
-          <el-tag type="danger" v-else>已拒绝</el-tag>
-        </template>
-      </el-table-column>
-    </el-table>
+
+    <el-card>
+      <el-table :data="absents" style="width: 100%">
+        <el-table-column prop="title" label="标题" width="180" />
+        <el-table-column prop="absent_type.name" label="类型" width="180" />
+        <el-table-column prop="request_content" label="原因" width="180" />
+        <el-table-column label="发起时间" width="180">
+          <template #default="scope">
+            {{ timeFormatter.stringFromDateTime(scope.row.create_time) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="start_date" label="开始日期" width="180" />
+        <el-table-column prop="end_date" label="结束日期" width="180" />
+        <el-table-column label="审核领导" width="180">
+          {{ responder_str }}
+        </el-table-column>
+        <el-table-column prop="response_content" label="反馈意见" width="180" />
+        <el-table-column prop="status" label="审核状态" width="180">
+          <template #default="scope">
+            <el-tag type="info" v-if="scope.row.status == 1">审核中</el-tag>
+            <el-tag type="success" v-else-if="scope.row.status == 2"
+              >已通过</el-tag
+            >
+            <el-tag type="danger" v-else>已拒绝</el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+      <template #footer>
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="pagination.total"
+          v-model:current-page="pagination.page"
+          :page-size="10"
+      /></template>
+    </el-card>
   </el-space>
 
   <el-dialog v-model="dialogFormVisible" title="发起请假" width="500">
@@ -97,7 +108,7 @@
 
 <script setup name="myabsent">
 import OAPageHeader from "@/components/OAPageHeader.vue";
-import { reactive, ref, onMounted, computed } from "vue";
+import { reactive, ref, onMounted, computed, watch } from "vue";
 import absentHttp from "@/api/absentHttp";
 import { ElMessage } from "element-plus";
 import timeFormatter from "@/utils/timeFormatter";
@@ -130,6 +141,36 @@ let responder = reactive({
 
 let absents = ref([]);
 
+let pagination = reactive({
+  // 总页码数
+  total: 0,
+  // 当前页码
+  page: 1,
+});
+
+// 封装获取第几页的数据
+const requestAbsents = async (page) => {
+  try {
+    let absents_data = await absentHttp.getMyAbsents(page);
+
+    let results = absents_data.results;
+    let total = absents_data.count;
+    pagination.total = total;
+
+    absents.value = results;
+  } catch (error) {
+    ElMessage.error(error.detail);
+  }
+};
+
+// 监听页面上的页码数变更
+watch(
+  () => pagination.page,
+  (value) => {
+    // console.log("page", value);
+    requestAbsents(value);
+  }
+);
 const onShowDialog = () => {
   absentForm.title = "";
   absentForm.absent_type_id = null;
@@ -174,13 +215,16 @@ onMounted(async () => {
     let responder_data = await absentHttp.getResponder();
     Object.assign(responder, responder_data);
 
-    let absents_data = await absentHttp.getMyAbsents();
-    absents.value = absents_data;
-    console.log(absents.value);
+    // 获取个人考勤信息
+    requestAbsents(1);
   } catch (error) {
     ElMessage.error(error.detail);
   }
 });
 </script>
 
-<style></style>
+<style scoped>
+.el-pagination {
+  justify-content: center;
+}
+</style>
