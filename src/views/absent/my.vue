@@ -9,21 +9,21 @@
 
     <el-card>
       <el-table :data="absents" style="width: 100%">
-        <el-table-column prop="title" label="标题" width="180" />
-        <el-table-column prop="absent_type.name" label="类型" width="180" />
-        <el-table-column prop="request_content" label="原因" width="180" />
-        <el-table-column label="发起时间" width="180">
+        <el-table-column prop="title" label="标题" />
+        <el-table-column prop="absent_type.name" label="类型" />
+        <el-table-column prop="request_content" label="原因" />
+        <el-table-column label="发起时间">
           <template #default="scope">
             {{ timeFormatter.stringFromDateTime(scope.row.create_time) }}
           </template>
         </el-table-column>
-        <el-table-column prop="start_date" label="开始日期" width="180" />
-        <el-table-column prop="end_date" label="结束日期" width="180" />
-        <el-table-column label="审核领导" width="180">
+        <el-table-column prop="start_date" label="开始日期" />
+        <el-table-column prop="end_date" label="结束日期" />
+        <el-table-column label="审核领导">
           {{ responder_str }}
         </el-table-column>
-        <el-table-column prop="response_content" label="反馈意见" width="180" />
-        <el-table-column prop="status" label="审核状态" width="180">
+        <el-table-column prop="response_content" label="反馈意见" />
+        <el-table-column prop="status" label="审核状态">
           <template #default="scope">
             <el-tag type="info" v-if="scope.row.status == 1">审核中</el-tag>
             <el-tag type="success" v-else-if="scope.row.status == 2"
