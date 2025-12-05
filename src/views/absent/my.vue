@@ -41,7 +41,11 @@
     </el-card>
   </OAMain>
 
-  <el-dialog v-model="dialogFormVisible" title="发起请假" width="500">
+  <OADialog
+    title="发起请假"
+    v-model="dialogFormVisible"
+    @submit="onSubmitAbsent"
+  >
     <el-form :model="absentForm" :rules="rules" ref="absentFormRef">
       <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
         <el-input v-model="absentForm.title" autocomplete="off" />
@@ -94,13 +98,7 @@
         />
       </el-form-item>
     </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="onSubmitAbsent"> 确认 </el-button>
-      </div>
-    </template>
-  </el-dialog>
+  </OADialog>
 </template>
 
 <script setup name="myabsent">
@@ -112,6 +110,7 @@ import timeFormatter from "@/utils/timeFormatter";
 
 import OAMain from "@/components/OAMain.vue";
 import OAPagination from "@/components/OAPagination.vue";
+import OADialog from "@/components/OADialog.vue";
 
 let dialogFormVisible = ref(false);
 let absentForm = reactive({
