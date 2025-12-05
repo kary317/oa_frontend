@@ -1,4 +1,26 @@
 <template>
+  <OADialog title="处理考勤" v-model="dialogVisible" @submit="onSubmitAbsent">
+    <el-form
+      :model="absentForm"
+      :rules="rules"
+      ref="absentFormRef"
+      label-width="100px"
+    >
+      <el-form-item label="结果" prop="status">
+        <el-radio-group v-model="absentForm.status">
+          <el-radio :value="2">通过</el-radio>
+          <el-radio :value="3">拒绝</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="理由" prop="response_content">
+        <el-input
+          type="textarea"
+          v-model="absentForm.response_content"
+          autocomplete="off"
+        />
+      </el-form-item>
+    </el-form>
+  </OADialog>
   <OAMain title="下属考勤">
     <el-card>
       <el-table :data="absents" style="width: 100%">
@@ -31,6 +53,7 @@
               v-if="scope.row.status == 1"
               type="primary"
               icon="EditPen"
+              @click="onShowDialog"
             />
             <el-button v-else disabled type="default">已处理</el-button>
           </template>
@@ -54,6 +77,7 @@ import timeFormatter from "@/utils/timeFormatter";
 
 import OAMain from "@/components/OAMain.vue";
 import OAPagination from "@/components/OAPagination.vue";
+import OADialog from "@/components/OADialog.vue";
 
 let absents = ref([]);
 let pagination = reactive({
@@ -61,6 +85,19 @@ let pagination = reactive({
   page: 1,
 });
 
+let dialogVisible = ref(false);
+let absentForm = reactive({
+  status: 2,
+  response_content: "",
+});
+let rules = reactive({
+  status: [{ required: true, message: "请选择处理结果!", trigger: "change" }],
+  response_content: [
+    { required: true, message: "请输入理由！", trigger: "blur" },
+  ],
+});
+
+let absentFormRef = ref();
 onMounted(async () => {
   try {
     let data = await absentHttp.getSubAbsents();
@@ -70,5 +107,9 @@ onMounted(async () => {
     ElMessage.error(error.detail);
   }
 });
+
+const onShowDialog = () => {
+  dialogVisible.value = true;
+};
 </script>
 <style scoped></style>
