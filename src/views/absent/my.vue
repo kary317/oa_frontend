@@ -192,7 +192,9 @@ const onSubmitAbsent = async () => {
   try {
     let absent = await absentHttp.applyAbsent(data);
     dialogFormVisible.value = false;
-    console.log(absent);
+    // console.log(absent);
+    // 将新增的考勤放到数组的第0个位置
+    absents.value.unshift(absent);
   } catch (error) {
     ElMessage.error(error.detail);
   }
