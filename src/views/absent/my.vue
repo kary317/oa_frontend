@@ -195,6 +195,7 @@ const onSubmitAbsent = async () => {
     // console.log(absent);
     // 将新增的考勤放到数组的第0个位置
     absents.value.unshift(absent);
+    ElMessage.success("请假发起成功!");
   } catch (error) {
     ElMessage.error(error.detail);
   }

@@ -25,6 +25,16 @@
     <el-card>
       <el-table :data="absents" style="width: 100%">
         <el-table-column prop="title" label="标题" />
+        <el-table-column label="发起者">
+          <template #default="scope">
+            {{
+              "[" +
+              scope.row.requester.department.name +
+              "]" +
+              scope.row.requester.realname
+            }}
+          </template>
+        </el-table-column>
         <el-table-column prop="absent_type.name" label="类型" />
         <el-table-column prop="request_content" label="原因" />
         <el-table-column label="发起时间">
@@ -53,7 +63,7 @@
               v-if="scope.row.status == 1"
               type="primary"
               icon="EditPen"
-              @click="onShowDialog"
+              @click="onShowDialog(scope.$index)"
             />
             <el-button v-else disabled type="default">已处理</el-button>
           </template>
@@ -108,8 +118,31 @@ onMounted(async () => {
   }
 });
 
-const onShowDialog = () => {
+let handleIndex = null;
+const onShowDialog = (index) => {
   dialogVisible.value = true;
+  handleIndex = index;
+};
+
+const onSubmitAbsent = () => {
+  absentFormRef.value.validate(async (valid, fields) => {
+    if (valid) {
+      try {
+        dialogVisible.value = false;
+        const absent = absents.value[handleIndex];
+        const data = await absentHttp.handleSubAbsent(
+          absent.id,
+          absentForm.status,
+          absentForm.response_content
+        );
+        // console.log(data);
+        absents.value.splice(handleIndex, 1, data);
+        ElMessage.success("下属考勤处理成功!");
+      } catch (error) {
+        ElMessage.error(error.detail);
+      }
+    }
+  });
 };
 </script>
 <style scoped></style>
