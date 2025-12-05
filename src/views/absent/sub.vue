@@ -60,5 +60,15 @@ let pagination = reactive({
   total: 0,
   page: 1,
 });
+
+onMounted(async () => {
+  try {
+    let data = await absentHttp.getSubAbsents();
+    pagination.total = data.count;
+    absents.value = data.results;
+  } catch (error) {
+    ElMessage.error(error.detail);
+  }
+});
 </script>
 <style scoped></style>

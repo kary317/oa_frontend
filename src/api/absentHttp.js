@@ -19,10 +19,15 @@ const getMyAbsents = (page = 1) => {
   const path = "/absent/absent/?who=my&page=" + page;
   return http.get(path);
 };
+const getSubAbsents = (page = 1) => {
+  const path = "/absent/absent/?who=sub&page=" + page;
+  return http.get(path);
+};
 
 export default {
   getAbsentTypes,
   getResponder,
   applyAbsent,
   getMyAbsents,
+  getSubAbsents,
 };
