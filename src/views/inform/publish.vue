@@ -4,6 +4,9 @@ import { ref, reactive, onBeforeUnmount, shallowRef, onMounted } from "vue";
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 
+import staffHttp from "@/api/staffHttp";
+import { ElMessage } from "element-plus";
+
 let informForm = reactive({
   title: "",
   content: "",
@@ -50,54 +53,18 @@ const onSubmit = () => {
     }
   });
 };
+
+onMounted(async () => {
+  try {
+    let data = await staffHttp.getAllDepartment();
+    departments.value = data.results;
+  } catch (error) {
+    ElMessage.error(error.detail);
+  }
+});
 </script>
 
 <template>
-  <!-- <OAMain title="发布通知">
-    <el-form :model="informForm" :rules="rules" ref="formRef">
-      <el-form-item label="标题" :label-width="formLabelWidth" prop="title">
-        <el-input v-model="informForm.title" autocomplete="off" />
-      </el-form-item>
-      <el-form-item
-        label="部门可见"
-        :label-width="formLabelWidth"
-        prop="department_ids"
-      >
-        <el-select v-model="informForm.department_ids" multiple>
-          <el-option :value="0" label="所有部门"></el-option>
-          <el-option
-            v-for="department in departments"
-            :label="department.name"
-            :value="department.id"
-            :key="department.name"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="内容" :label-width="formLabelWidth" prop="content">
-        <div style="border: 1px solid #ccc; width: 100%">
-          <Toolbar
-            style="border-bottom: 1px solid #ccc"
-            :editor="editorRef"
-            :defaultConfig="toolbarConfig"
-            :mode="mode"
-          />
-          <Editor
-            style="height: 500px; overflow-y: hidden"
-            v-model="informForm.content"
-            :defaultConfig="editorConfig"
-            :mode="mode"
-            @onCreated="handleCreated"
-          />
-        </div>
-      </el-form-item>
-      <el-form-item>
-        <div style="text-align: right; flex: 1">
-          <el-button type="primary" @click="onSubmit">提交</el-button>
-        </div>
-      </el-form-item>
-    </el-form>
-  </OAMain> -->
-
   <OAMain title="发布通知">
     <el-card>
       <el-form :model="informForm" :rules="rules" ref="formRef">
