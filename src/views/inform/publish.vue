@@ -10,6 +10,8 @@ import { ElMessage } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
 
+import informHttp from "@/api/informHttp";
+
 let informForm = reactive({
   title: "",
   content: "",
@@ -94,9 +96,15 @@ const handleCreated = (editor) => {
 ////////////// 这是跟wangEditor相关的配置 //////////////
 
 const onSubmit = () => {
-  formRef.value.validate((valid, fields) => {
+  formRef.value.validate(async (valid, fields) => {
     if (valid) {
       console.log(informForm);
+      try {
+        let data = await informHttp.publishInform(informForm);
+        console.log(data);
+      } catch (error) {
+        ElMessage.error(error.detail);
+      }
     }
   });
 };
