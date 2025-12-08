@@ -7,6 +7,9 @@ import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import staffHttp from "@/api/staffHttp";
 import { ElMessage } from "element-plus";
 
+import { useAuthStore } from "@/stores/auth";
+const authStore = useAuthStore();
+
 let informForm = reactive({
   title: "",
   content: "",
@@ -30,7 +33,34 @@ let departments = ref([]);
 const editorRef = shallowRef();
 
 const toolbarConfig = {};
-const editorConfig = { placeholder: "请输入内容..." };
+const editorConfig = {
+  placeholder: "请输入内容...",
+  MENU_CONF: {
+    uploadImage: {
+      // http://localhost:5173/image/upload
+      // http://localhost:8000/image/upload
+      server: import.meta.env.VITE_BASE_URL + "/image/upload/",
+      fieldName: "image",
+      maxFileSize: 0.5 * 1024 * 1024,
+      maxNumberOfFiles: 10,
+      allowedFileTypes: ["image/*"],
+      headers: {
+        Authorization: "JWT " + authStore.token,
+      },
+      timeout: 6 * 1000, // 6 秒,
+      // 自定义插入图片,用于富文本编辑器上传图片成功后,再获取插入成功的图片显示在富文本编辑器编辑区域,参考博客园也有这样的功能
+      customInsert(res, insertFn) {
+        // res 即服务端的返回结果
+        let data = res.data;
+        let url = import.meta.env.VITE_BASE_URL + data.url;
+        let href = import.meta.env.VITE_BASE_URL + data.href;
+        let alt = data.alt;
+        // 从 res 中找到 url alt href ，然后插入图片
+        insertFn(url, alt, href);
+      },
+    },
+  },
+};
 
 let mode = "default";
 
