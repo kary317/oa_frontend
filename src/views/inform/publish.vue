@@ -50,13 +50,30 @@ const editorConfig = {
       timeout: 6 * 1000, // 6 秒,
       // 自定义插入图片,用于富文本编辑器上传图片成功后,再获取插入成功的图片显示在富文本编辑器编辑区域,参考博客园也有这样的功能
       customInsert(res, insertFn) {
-        // res 即服务端的返回结果
-        let data = res.data;
-        let url = import.meta.env.VITE_BASE_URL + data.url;
-        let href = import.meta.env.VITE_BASE_URL + data.href;
-        let alt = data.alt;
-        // 从 res 中找到 url alt href ，然后插入图片
-        insertFn(url, alt, href);
+        if (res.errno == 0) {
+          // res 即服务端的返回结果
+          let data = res.data;
+          let url = import.meta.env.VITE_BASE_URL + data.url;
+          let href = import.meta.env.VITE_BASE_URL + data.href;
+          let alt = data.alt;
+          // 从 res 中找到 url alt href ，然后插入图片
+          insertFn(url, alt, href);
+        } else {
+          ElMessage.error(res.message);
+        }
+      },
+      // 单个文件上传失败
+      onFailed(file, res) {
+        console.log(`${file.name} 上传失败`, res);
+      },
+
+      // 上传错误，或者触发 timeout 超时
+      onError(file, err, res) {
+        if (file.size > 0.5 * 1024 * 1024) {
+          ElMessage.error("图片文件最大不能超过0.5MB！");
+        } else {
+          ElMessage.error("图片格式不正确！");
+        }
       },
     },
   },
