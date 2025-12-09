@@ -16,6 +16,9 @@ let pagination = reactive({
   total: 0,
 });
 
+let dialogVisible = ref(false);
+let handleIndex = 0;
+
 onMounted(async () => {
   try {
     let data = await informHttp.getInformList(1);
@@ -28,10 +31,28 @@ onMounted(async () => {
   }
 });
 
-const onShowDialog = () => {};
+const onShowDialog = (index) => {
+  handleIndex = index;
+  dialogVisible.value = true;
+};
+
+const onDeleteInform = async () => {
+  try {
+    let inform = informs.value[handleIndex];
+    await informHttp.deleteInform(inform.id);
+    informs.value.splice(handleIndex, 1);
+    dialogVisible.value = false;
+    ElMessage.success("通知删除成功！");
+  } catch (error) {
+    ElMessage.error(error.detail);
+  }
+};
 </script>
 
 <template>
+  <OADialog v-model="dialogVisible" title="提示" @submit="onDeleteInform">
+    <span>您确定要删除这篇通知吗？</span>
+  </OADialog>
   <OAMain title="通知列表">
     <el-card>
       <el-table :data="informs">

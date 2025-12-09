@@ -62,6 +62,17 @@ class Http {
       }
     });
   }
+  delete(path) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let response = await this.instance.delete(path);
+        // 因为服务端的delete方法，只是返回一个状态码，并没有数据，所以直接把result返回回去就可以了
+        resolve(response);
+      } catch (error) {
+        reject(error.response.data);
+      }
+    });
+  }
 }
 
 // const http = new Http();
