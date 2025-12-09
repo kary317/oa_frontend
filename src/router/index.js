@@ -13,6 +13,9 @@ import publish from "@/views/inform/publish.vue";
 import inform_detail from "@/views/inform/detail.vue";
 import inform_list from "@/views/inform/list.vue";
 
+import staffadd from "@/views/staff/add.vue";
+import stafflist from "@/views/staff/list.vue";
+
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
@@ -30,6 +33,8 @@ const router = createRouter({
           name: "inform_detail",
           component: inform_detail,
         },
+        { path: "/staff/add", name: "staff_add", component: staffadd },
+        { path: "/staff/list", name: "staff_list", component: stafflist },
       ],
     },
     {
