@@ -26,7 +26,7 @@ const router = createRouter({
         { path: "/inform/publish", name: "inform_publish", component: publish },
         { path: "/inform/list", name: "inform_list", component: inform_list },
         {
-          path: "/inform/detail",
+          path: "/inform/detail/:pk",
           name: "inform_detail",
           component: inform_detail,
         },
