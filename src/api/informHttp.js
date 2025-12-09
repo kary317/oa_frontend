@@ -15,8 +15,14 @@ const deleteInform = (pk) => {
   return http.delete(path);
 };
 
+const getInformDetail = (pk) => {
+  const path = "/inform/inform/" + pk + "/";
+  return http.get(path);
+};
+
 export default {
   publishInform,
   getInformList,
   deleteInform,
+  getInformDetail,
 };
