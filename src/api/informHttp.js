@@ -20,9 +20,15 @@ const getInformDetail = (pk) => {
   return http.get(path);
 };
 
+const readInform = (pk) => {
+    const path = "/inform/inform/read/"
+    return http.post(path, {inform_pk: pk})
+}
+
 export default {
   publishInform,
   getInformList,
   deleteInform,
   getInformDetail,
+  readInform,
 };

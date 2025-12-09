@@ -30,6 +30,8 @@ onMounted(async () => {
   } catch (detail) {
     ElMessage.error(detail);
   }
+  // 发送阅读请求
+  await informHttp.readInform(pk);
 });
 </script>
 
@@ -54,7 +56,7 @@ onMounted(async () => {
       <template #default>
         <div v-html="inform.content" class="content"></div>
       </template>
-      <template #footer>阅读量：10</template>
+      <template #footer>阅读量：{{ inform.read_count}}</template>
     </el-card>
   </OAMain>
 </template>
