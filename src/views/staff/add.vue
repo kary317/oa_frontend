@@ -22,7 +22,23 @@ let rules = reactive({
   realname: [{ required: true, message: "请输入真实姓名！", trigger: "blur" }],
 });
 
-const onSubmit = () => {};
+const onSubmit = () => {
+  formRef.value.validate(async (valid, fields) => {
+    if (valid) {
+      try {
+        await staffHttp.addStaff(
+          staffForm.realname,
+          staffForm.email,
+          staffForm.password
+        );
+        ElMessage.success("员工添加成功！");
+        router.push({ name: "staff_list" });
+      } catch (error) {
+        ElMessage.error(error.detail);
+      }
+    }
+  });
+};
 </script>
 
 <template>
