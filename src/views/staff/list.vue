@@ -1,6 +1,6 @@
 <script setup name="stafflist">
 import OAMain from "@/components/OAMain.vue";
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import staffHttp from "@/api/staffHttp";
 import { ElMessage } from "element-plus";
 import timeFormatter from "@/utils/timeFormatter";
@@ -12,13 +12,32 @@ let pagination = reactive({
 });
 let page_size = ref(10);
 
-onMounted(async () => {
+async function fetchStaffList(page, page_size) {
   try {
-    let data = await staffHttp.getStaffList();
+    let data = await staffHttp.getStaffList(page, page_size);
     pagination.total = data.count;
     staffs.value = data.results;
   } catch (error) {
     ElMessage.error(error.detail);
+  }
+}
+
+onMounted(async () => {
+  fetchStaffList(1, page_size.value);
+});
+
+watch(
+  () => pagination.page,
+  async function (value) {
+    fetchStaffList(value, page_size.value);
+  }
+);
+
+watch(page_size, function (value) {
+  if (pagination.page == 1) {
+    fetchStaffList(1, value);
+  } else {
+    pagination.page = 1;
   }
 });
 </script>
@@ -29,7 +48,7 @@ onMounted(async () => {
       <el-table :data="staffs">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="序号" width="60">
-          <template #default="scope">{{ scope.$index }}</template>
+          <template #default="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
         <el-table-column prop="realname" label="姓名"></el-table-column>
         <el-table-column prop="email" label="邮箱"></el-table-column>
@@ -50,11 +69,7 @@ onMounted(async () => {
         </el-table-column>
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button
-              type="primary"
-              icon="Edit"
-              circle
-            ></el-button>
+            <el-button type="primary" icon="Edit" circle></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -72,6 +87,7 @@ onMounted(async () => {
             layout="prev, pager, next"
             :total="pagination.total"
             v-model:currentPage="pagination.page"
+            :page-size="page_size"
           />
         </div>
       </template>
