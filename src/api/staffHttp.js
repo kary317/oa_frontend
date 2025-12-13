@@ -10,9 +10,16 @@ const addStaff = (realname, email, password) => {
   return http.post(path, { realname, email, password });
 };
 
-const getStaffList = (page = 1, size = 10) => {
-  const path = `/staff/staff/?page=${page}&size=${size}`;
-  return http.get(path);
+// const getStaffList = (page = 1, size = 10) => {
+//   const path = `/staff/staff/?page=${page}&size=${size}`;
+//   return http.get(path);
+// };
+const getStaffList = (page = 1, size = 10, params) => {
+  const path = `/staff/staff/`;
+  params = params ? params : {};
+  params["page"] = page;
+  params["size"] = size;
+  return http.get(path, params);
 };
 
 // 修改员工状态

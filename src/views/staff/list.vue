@@ -21,7 +21,7 @@ let staffForm = reactive({
 let handleIndex = 0;
 
 let filterForm = reactive({
-  department_id: 1,
+  department_id: null,
   realname: "",
   date_joined: [],
 });
@@ -29,7 +29,8 @@ let departments = ref([]);
 
 async function fetchStaffList(page, page_size) {
   try {
-    let data = await staffHttp.getStaffList(page, page_size);
+    // 获取员工列表,增加过滤条件
+    let data = await staffHttp.getStaffList(page, page_size, filterForm);
     pagination.total = data.count;
     staffs.value = data.results;
   } catch (error) {
@@ -85,7 +86,9 @@ const onSubmitEditStaff = async () => {
   }
 };
 
-const onSearch = () => {};
+const onSearch = () => {
+  fetchStaffList(1, page_size.value);
+};
 
 const onDownload = () => {};
 

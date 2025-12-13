@@ -45,7 +45,9 @@ class Http {
   get(path, params) {
     return new Promise(async (resolve, reject) => {
       try {
-        let response = await this.instance.get(path, params);
+        // let response = await this.instance.get(path, params);
+        // 处理小bug
+        let response = await this.instance.get(path, { params });
         resolve(response.data);
       } catch (error) {
         reject(error.response.data);
