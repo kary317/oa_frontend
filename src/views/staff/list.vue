@@ -20,6 +20,13 @@ let staffForm = reactive({
 });
 let handleIndex = 0;
 
+let filterForm = reactive({
+  department_id: 1,
+  realname: "",
+  date_joined: [],
+});
+let departments = ref([]);
+
 async function fetchStaffList(page, page_size) {
   try {
     let data = await staffHttp.getStaffList(page, page_size);
@@ -32,6 +39,13 @@ async function fetchStaffList(page, page_size) {
 
 onMounted(async () => {
   fetchStaffList(1, page_size.value);
+
+  try {
+    let data = await staffHttp.getAllDepartment();
+    departments.value = data.results;
+  } catch (error) {
+    ElMessage.error(error.detail);
+  }
 });
 
 watch(
@@ -70,6 +84,13 @@ const onSubmitEditStaff = async () => {
     ElMessage.error(error.detail);
   }
 };
+
+const onSearch = () => {};
+
+const onDownload = () => {};
+
+const onUploadSuccess = () => {};
+
 </script>
 
 <template>
@@ -89,6 +110,55 @@ const onSubmitEditStaff = async () => {
   </OADialog>
 
   <OAMain title="员工列表">
+    <el-card>
+      <el-form :inline="true" class="my-form-inline">
+        <el-form-item label="按部门">
+          <el-select v-model="filterForm.department_id">
+            <el-option
+              v-for="department in departments"
+              :label="department.name"
+              :value="department.id"
+              :key="department.name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="按姓名">
+          <el-input v-model="filterForm.realname" />
+        </el-form-item>
+        <el-form-item label="按入职时间">
+          <el-date-picker
+            v-model="filterForm.date_joined"
+            type="daterange"
+            range-separator="到"
+            start-placeholder="起始日期"
+            end-placeholder="结束日期"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="Search" @click="onSearch"></el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="danger" icon="Download" @click="onDownload"
+            >下载</el-button
+          >
+        </el-form-item>
+
+        <el-form-item>
+          <el-upload
+            :on-success="onUploadSuccess"
+            :on-error="onUploadFail"
+            :show-file-list="false"
+            :auto-upload="true"
+            accept=".xlsx, .xls"
+          >
+            <el-button type="danger" icon="Upload">上传</el-button>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+    </el-card>
+
     <el-card>
       <el-table :data="staffs">
         <el-table-column type="selection" width="55"></el-table-column>
@@ -145,4 +215,16 @@ const onSubmitEditStaff = async () => {
   </OAMain>
 </template>
 
-<style scoped></style>
+<style scoped>
+.my-form-inline .el-input {
+  --el-input-width: 140px;
+}
+
+.my-form-inline .el-select {
+  --el-select-width: 140px;
+}
+
+.el-form--inline .el-form-item {
+  margin-right: 20px;
+}
+</style>
