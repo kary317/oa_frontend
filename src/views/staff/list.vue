@@ -5,12 +5,20 @@ import staffHttp from "@/api/staffHttp";
 import { ElMessage } from "element-plus";
 import timeFormatter from "@/utils/timeFormatter";
 
+import OADialog from "@/components/OADialog.vue";
+
 let staffs = ref([]);
 let pagination = reactive({
   page: 1,
   total: 0,
 });
 let page_size = ref(10);
+
+let dialogVisible = ref(false);
+let staffForm = reactive({
+  status: 1,
+});
+let handleIndex = 0;
 
 async function fetchStaffList(page, page_size) {
   try {
@@ -40,9 +48,46 @@ watch(page_size, function (value) {
     pagination.page = 1;
   }
 });
+
+const onEditStaff = (index) => {
+  handleIndex = index;
+  dialogVisible.value = true;
+  let staff = staffs.value[index];
+  staffForm.status = staff.status;
+};
+
+const onSubmitEditStaff = async () => {
+  let staff = staffs.value[handleIndex];
+  try {
+    let newstaff = await staffHttp.updateStaffStatus(
+      staff.uid,
+      staffForm.status
+    );
+    ElMessage.success("员工状态修改成功！");
+    dialogVisible.value = false;
+    staffs.value.splice(handleIndex, 1, newstaff);
+  } catch (error) {
+    ElMessage.error(error.detail);
+  }
+};
 </script>
 
 <template>
+  <OADialog
+    title="修改员工状态"
+    v-model="dialogVisible"
+    @submit="onSubmitEditStaff"
+  >
+    <el-form :model="staffForm" label-width="100px">
+      <el-form-item label="状态">
+        <el-radio-group v-model="staffForm.status" class="ml-4">
+          <el-radio :value="1">激活</el-radio>
+          <el-radio :value="3">锁定</el-radio>
+        </el-radio-group>
+      </el-form-item>
+    </el-form>
+  </OADialog>
+
   <OAMain title="员工列表">
     <el-card>
       <el-table :data="staffs">
@@ -69,7 +114,12 @@ watch(page_size, function (value) {
         </el-table-column>
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button type="primary" icon="Edit" circle></el-button>
+            <el-button
+              type="primary"
+              icon="Edit"
+              circle
+              @click="onEditStaff(scope.$index)"
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>

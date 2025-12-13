@@ -15,8 +15,15 @@ const getStaffList = (page = 1, size = 10) => {
   return http.get(path);
 };
 
+// 修改员工状态
+const updateStaffStatus = (staff_id, status) => {
+  const path = "/staff/staff/" + staff_id + "/";
+  return http.put(path, { status });
+};
+
 export default {
   getAllDepartment,
   addStaff,
   getStaffList,
+  updateStaffStatus,
 };
