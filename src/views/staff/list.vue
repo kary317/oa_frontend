@@ -7,6 +7,9 @@ import timeFormatter from "@/utils/timeFormatter";
 
 import OADialog from "@/components/OADialog.vue";
 
+import { useAuthStore } from "@/stores/auth";
+const authStore = useAuthStore();
+
 let staffs = ref([]);
 let pagination = reactive({
   page: 1,
@@ -29,11 +32,14 @@ let departments = ref([]);
 
 let tableRef = ref();
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 async function fetchStaffList(page, page_size) {
   try {
     // 获取员工列表,增加过滤条件
     let data = await staffHttp.getStaffList(page, page_size, filterForm);
     pagination.total = data.count;
+    pagination.page = page;
     staffs.value = data.results;
   } catch (error) {
     ElMessage.error(error.detail);
@@ -123,7 +129,16 @@ const onDownload = async () => {
   }
 };
 
-const onUploadSuccess = () => {};
+const onUploadSuccess = () => {
+  ElMessage.success("员工上传成功！");
+  // 重新获取第一页的员工数据
+  fetchStaffList(1, page_size.value);
+};
+
+const onUploadFail = (error) => {
+  const detail = JSON.parse(error.message).detail;
+  ElMessage.error(detail);
+};
 </script>
 
 <template>
@@ -180,6 +195,8 @@ const onUploadSuccess = () => {};
 
         <el-form-item>
           <el-upload
+            :action="BASE_URL + '/staff/upload/'"
+            :headers="{ Authorization: 'JWT ' + authStore.token }"
             :on-success="onUploadSuccess"
             :on-error="onUploadFail"
             :show-file-list="false"
