@@ -28,9 +28,16 @@ const updateStaffStatus = (staff_id, status) => {
   return http.put(path, { status });
 };
 
+const downloadStaffs = (pks) => {
+  const path = "/staff/download/";
+  // return http.downloadFile(path, JSON.stringify(pks));
+  return http.downloadFile(path, { pks: JSON.stringify(pks) });
+};
+
 export default {
   getAllDepartment,
   addStaff,
   getStaffList,
   updateStaffStatus,
+  downloadStaffs,
 };

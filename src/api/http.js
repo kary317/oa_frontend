@@ -75,6 +75,19 @@ class Http {
       }
     });
   }
+  downloadFile(path, params) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let response = await this.instance.get(path, {
+          params,
+          responseType: "blob",
+        });
+        resolve(response.data);
+      } catch (error) {
+        reject(error.response.data);
+      }
+    });
+  }
 }
 
 // const http = new Http();

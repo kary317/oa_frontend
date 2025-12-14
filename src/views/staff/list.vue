@@ -27,6 +27,8 @@ let filterForm = reactive({
 });
 let departments = ref([]);
 
+let tableRef = ref();
+
 async function fetchStaffList(page, page_size) {
   try {
     // 获取员工列表,增加过滤条件
@@ -90,10 +92,38 @@ const onSearch = () => {
   fetchStaffList(1, page_size.value);
 };
 
-const onDownload = () => {};
+const onDownload = async () => {
+  // 通过el-table暴露出的getSelectionRows方法 返回当前选中的行
+  let rows = tableRef.value.getSelectionRows();
+  if (!rows || rows.length == 0) {
+    ElMessage.info("请先选中要导出的员工！");
+    return;
+  }
+  try {
+    let response = await staffHttp.downloadStaffs(rows.map((row) => row.uid));
+    // 借助a标签，将response数据，放到a标签的href属性上，然后模拟点击行为
+    // 将返回的二进制数据，创建成一个url对象
+    let href = URL.createObjectURL(response);
+    // 创建a标签
+    const a = document.createElement("a");
+    a.href = href;
+    // 设置a标签的download属性，在点击的时候，就会执行下载操作
+    a.setAttribute("download", "员工信息.xlsx");
+    // 将a标签添加到网页结构中
+    document.body.appendChild(a);
+    // 模拟点击行为，只要点击了，那么浏览器就会启动下载操作（下载href属性指定的数据）
+    a.click();
+
+    // 只要执行了下载，a标签就没用了，就可以从网页中移除了
+    document.body.removeChild(a);
+    // 移除URL数据
+    URL.revokeObjectURL(href);
+  } catch (error) {
+    ElMessage.error(error.detail);
+  }
+};
 
 const onUploadSuccess = () => {};
-
 </script>
 
 <template>
@@ -163,7 +193,7 @@ const onUploadSuccess = () => {};
     </el-card>
 
     <el-card>
-      <el-table :data="staffs">
+      <el-table :data="staffs" ref="tableRef">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="序号" width="60">
           <template #default="scope">{{ scope.$index + 1 }}</template>
