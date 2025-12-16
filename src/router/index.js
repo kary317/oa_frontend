@@ -16,6 +16,8 @@ import inform_list from "@/views/inform/list.vue";
 import staffadd from "@/views/staff/add.vue";
 import stafflist from "@/views/staff/list.vue";
 
+import home from "@/views/home/home.vue";
+
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
@@ -24,6 +26,7 @@ const router = createRouter({
       name: "Frame",
       component: Frame,
       children: [
+        { path: "/", name: "home", component: home },
         { path: "/absent/my", name: "myabsent", component: myabsent },
         { path: "/absent/sub", name: "subabsent", component: subabsent },
         { path: "/inform/publish", name: "inform_publish", component: publish },

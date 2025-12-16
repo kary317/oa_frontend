@@ -106,7 +106,7 @@ const onExit = () => {
         :collapse-transition="false"
         :router="true"
       >
-        <el-menu-item index="1">
+        <el-menu-item index="1" :route="{ name: 'home' }">
           <el-icon><HomeFilled /></el-icon>
           <span>首页</span>
         </el-menu-item>
